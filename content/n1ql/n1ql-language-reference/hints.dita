@@ -3,28 +3,66 @@
 <concept id="concept_npj_srf_2s">
 	<title>USE INDEX clause</title>
 	<shortdesc>The USE INDEX clause supplies index hints that specify an index to use as part of the
-		query execution. The query engine attempts to use the specified index if the index is
-		applicable for the query.</shortdesc>
+		query execution.  </shortdesc>
 	<conbody>
-		<p><i>use-index-clause:</i></p>
-		<codeblock>USE INDEX ( index-ref [ , index-ref ]* )   </codeblock>  
-		<p><i>index-ref:</i></p>
-		<codeblock>index-name [ index-using ]</codeblock>  
-		<p><i>index-name:</i></p>
-		<codeblock>identifier</codeblock> 
-		<p><i>index-using:</i></p>
-		<codeblock>USING ( VIEW | GSI )</codeblock>
-		
-		<p>Here's an example that shows how to use index hints. The example creates a GSI index called
-				<codeph>beer_abv</codeph>, and then selects the <codeph>name</codeph> and
-				<codeph>abv</codeph> fields, specifying that the query engine use the
-				<codeph>beer_abv</codeph> index.</p>
-		<codeblock outputclass="language-sql">CREATE INDEX beer_abv ON `beer-sample`(abv) USING GSI;
-
-SELECT name, abv FROM `beer-sample` USE INDEX (beer_abv USING GSI) WHERE abv > 10;			</codeblock>
-		<p>The following example shows how to perform a similar query with a view index: </p>
-		<codeblock outputclass="language-sql">CREATE INDEX beer_abv ON `beer-sample`(abv) USING VIEW;
-
-SELECT name, abv FROM `beer-sample` USE INDEX (beer_abv USING VIEW) WHERE abv > 10;			</codeblock>
+		<section>
+			<title>Purpose</title>
+			<p>The USE INDEX clause supplies index hints that specify an index to use as part of the
+				query execution. The query engine attempts to use the specified index if the index is
+				applicable for the query.</p>
+		</section>
+		<section>
+			<title>Syntax</title>
+			<codeblock>USE INDEX "(" <i>index_ref</i> [ USING GSI ], <i>index_ref2</i> [ USING GSI ]* ")"</codeblock>
+		</section>
+		<section id="section_d4t_wkk_tdb">
+			<title>Arguments</title>
+			<p>
+				<dl>
+					<dlentry>
+						<dt>index_ref</dt>
+						<dd>String name of an existing index to be used.</dd>
+					</dlentry>
+				</dl>
+				<dl>
+					<dlentry>
+						<dt><codeph>USING GSI</codeph></dt>
+						<dd>[Optional] Specify using Global Secondary Index.</dd>
+					</dlentry>
+				</dl>
+			</p>
+		</section>
+		<section id="section_lrf_t1r_tdb">
+			<title>Examples</title>
+			<p><b>Example 1</b>: Make an index and a query using that index; then show where it's
+				used in the Explain
+				Plan.<codeblock>CREATE INDEX <b>air</b> ON `travel-sample`(airline) USING GSI;</codeblock>Make
+				a query using the above
+				index:<codeblock>SELECT sourceairport, airline 
+FROM `travel-sample` 
+USE INDEX (<b>air</b> USING GSI) 
+WHERE airline > "M";</codeblock>Results:<codeblock>[
+  {
+    "airline": "M5",
+    "sourceairport": "BFI"
+  },
+  {
+    "airline": "M5",
+    "sourceairport": "BFI"
+  },
+  {
+    "airline": "M5",
+    "sourceairport": "CLM"
+  },
+...</codeblock>Explain
+				Plan:<codeblock>{
+  "plan": {
+    "#operator": "Sequence",
+    "~children": [
+      {
+        "#operator": "IndexScan3",
+<b>        "index": "air",</b>
+...</codeblock></p>
+		</section>
 	</conbody>
 </concept>
