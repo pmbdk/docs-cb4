@@ -296,7 +296,7 @@
 						
 						<row>
 							<entry><codeph>--bypass-sensitive-data</codeph></entry>
-							<entry>If set to <codeph>true</codeph>, skips collecting breakpad crash-dumps.</entry>
+							<entry>Skips collecting breakpad crash dumps if set to <codeph>true</codeph>.</entry>
 						</row>
 						
 						<row>
@@ -315,7 +315,11 @@
 							<entry><codeph>--initargs=INITARGS</codeph></entry>
 							<entry>Specifies the server <codeph>initargs</codeph> path.</entry>
 						</row>
-						
+                        <row>
+                            <entry><codeph>--single-node-diag</codeph></entry>
+                            <entry>Collects on a per node basis, diagnostics on just this node. The
+                                default is all reachable nodes.</entry>
+                        </row>
 						<row>
 							<entry><codeph>--multi-node-diag</codeph></entry>
 							<entry>Specifies that diagnostic information should be collected for each reachable 
